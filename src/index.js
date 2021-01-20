@@ -5,17 +5,35 @@ const slider = document.querySelector('.slider');
 const sliderImgs = document.querySelectorAll('.slider img');
 const nextBtn = document.querySelector('.nextBtn');
 const prevBtn = document.querySelector('.prevBtn');
-console.log({ sliderImgs });
-const size = sliderImgs[1].clientWidth;
-console.log('JS working');
 
+let size;
 let counter = 1;
+
+console.log('JS working');
+console.log({ sliderImgs });
 // FUNCTIONS------------------------------------------------------
-console.log({ size });
-console.log({ counter });
 
-slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
-
+function autoAdvanceSlide() {
+  console.log({ counter });
+  console.log('auto slide');
+  if (sliderImgs[counter].id === 'copyFirstPic') {
+    counter = (sliderImgs.length - counter);
+    slider.style.transition = 'none';
+    slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
+  }
+  if (sliderImgs[counter].id === 'copyLastPic') {
+    counter = sliderImgs.length - 2;
+    slider.style.transition = 'none';
+    slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
+  }
+  slider.style.transition = 'transform 0.4s ease-in-out';
+  counter++;
+  slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
+}
+function resetTimer() {
+  clearInterval(myTimer);
+  myTimer = setInterval(autoAdvanceSlide, 5000);
+}
 // Button Listeners
 nextBtn.addEventListener('click', () => {
   console.log('NEXT');
@@ -26,27 +44,31 @@ nextBtn.addEventListener('click', () => {
   slider.style.transition = 'transform 0.4s ease-in-out';
   counter++;
   slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
+  resetTimer();
 });
 prevBtn.addEventListener('click', () => {
-  console.log('PREV');
-  console.log({ size });
-  console.log({ counter });
-
-  if (counter <= 0) return;
+  if (counter <= 0) { return; }
   slider.style.transition = 'transform 0.4s ease-in-out';
   counter--;
   slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
+  resetTimer();
 });
 slider.addEventListener('transitionend', () => {
   if (sliderImgs[counter].id === 'copyFirstPic') {
+    counter = (sliderImgs.length - counter);
     slider.style.transition = 'none';
-    counter = sliderImgs.length - 2;
     slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
   }
   if (sliderImgs[counter].id === 'copyLastPic') {
+    counter = sliderImgs.length - 2;
     slider.style.transition = 'none';
-    counter = sliderImgs.length - counter;
     slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
   }
 });
 // SCRIPT---------------------------------------------------------
+window.onload = () => {
+  size = sliderImgs[1].clientWidth;
+  slider.style.transform = 'translateX(' + (-size * counter) + 'px)';
+  console.log({ size });
+};
+let myTimer = setInterval(autoAdvanceSlide, 5000);
